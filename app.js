@@ -2,49 +2,34 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const app = express();
+let items = [];
 
 app.set('view engine', 'ejs');
 
 // parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get('/', (req, res) => {
-    const dayOfTheWeek = new Date();
-    let day = "";
+    const currentDay = new Date();
+    // const daysOfTheWeek = ["Sunday", "Monday", "Tueday", "Wednessday", "Thursday", "Friday", "Saturday"]
+    // const day = daysOfTheWeek[currentDay.getDay()];
 
-    switch (dayOfTheWeek.getDay()) {
-        case 0:
-            day = "Sunday";
-            break;
-        case 1:
-            day = "Monday";
-            break;
-        case 2:
-            day = "Tueday";
-            break;
-        case 3:
-            day = "Wednessday";
-            break;
-        case 4:
-            day = "Thursday";
-            break;
-        case 5:
-            day = "Friday";
-            break;
-        case 6:
-            day = "Saturday";
-            break;
-        
-        default:
-            break;
-    }
-    // if (dayOfTheWeek.getDay() == 6 || dayOfTheWeek.getDay() == 0) {
-    //     day = "Weekend";
-    // } else {
-    //     day = "Weekday";
-    // };
+    const options = { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'short', 
+        day: 'numeric' 
+    };
 
-    res.render("list", {kindOfDay: day});
+    day = currentDay.toLocaleDateString('en-us', options);
+
+    res.render("list", {kindOfDay: day, items: items});
+});
+
+app.post('/', (req, res) => {
+    const item = req.body.todolist; 
+    items.push(item);
+    res.redirect('/');
 });
 
 app.listen(3000, () => {
